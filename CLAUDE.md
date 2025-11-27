@@ -25,6 +25,7 @@ Aims to provide an experience similar to Python's `venv`, where settings are app
 ## Commands (Specification)
 * `gctx add <context-name> --email=<...> --name=<...> [--ssh-key=<...>]`: Save configuration (email and name are required).
 * `gctx use <context-name>`: Apply configuration to current directory's `.git/config`.
+* `gctx clone <context-name> <repository-url> [directory]`: Clone a repository using the specified context's SSH key, then apply the context.
 * `gctx list`: Display list of registered configurations.
 * `gctx status`: Display configuration currently applied to the repository.
 * `gctx remove <context-name>`: Remove a configuration.

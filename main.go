@@ -28,6 +28,8 @@ func main() {
 		err = cmd.Status(args)
 	case "remove":
 		err = cmd.Remove(args)
+	case "clone":
+		err = cmd.Clone(args)
 	default:
 		fmt.Printf("Unknown command: %s\n", command)
 		printUsage()
@@ -46,6 +48,7 @@ func printUsage() {
 	fmt.Println("  add     Add a new context")
 	fmt.Println("  list    List available contexts")
 	fmt.Println("  use     Apply a context to the current repository")
+	fmt.Println("  clone   Clone a repository with a specific context")
 	fmt.Println("  status  Show current context status")
 	fmt.Println("  remove  Remove a context")
 }
