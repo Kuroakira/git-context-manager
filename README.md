@@ -64,7 +64,21 @@ Example:
 gctx use personal
 ```
 
-### 4. Check Status
+### 4. Clone with Context
+
+Clone a repository using the specified context's SSH key, then apply the context automatically.
+
+```bash
+gctx clone <context-name> <repository-url> [directory]
+```
+
+Example:
+```bash
+gctx clone work git@github.com:company/project.git
+gctx clone personal git@github.com:user/repo.git my-repo
+```
+
+### 5. Check Status
 
 Show the currently applied configuration for the repository.
 
@@ -72,7 +86,7 @@ Show the currently applied configuration for the repository.
 gctx status
 ```
 
-### 5. Remove Context
+### 6. Remove Context
 
 Remove a registered context.
 
