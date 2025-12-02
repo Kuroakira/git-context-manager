@@ -38,8 +38,18 @@ func Clone(args []string) error {
 		return fmt.Errorf("context '%s' not found", contextName)
 	}
 
-	// Build git clone command with SSH key if specified
-	gitArgs := []string{"clone", repoURL, targetDir}
+	// Convert HTTPS URL to SSH format if SSH key is specified
+	cloneURL := repoURL
+	if ctx.SSHKeyPath != "" {
+		convertedURL, converted := convertToSSHURL(repoURL)
+		if converted {
+			cloneURL = convertedURL
+			fmt.Printf("Converted URL to SSH format: %s\n", cloneURL)
+		}
+	}
+
+	// Build git clone command
+	gitArgs := []string{"clone", cloneURL, targetDir}
 	cmd := exec.Command("git", gitArgs...)
 
 	// Set GIT_SSH_COMMAND if SSH key is specified
@@ -91,4 +101,40 @@ func extractRepoName(url string) string {
 
 	// Get the last part of the path
 	return filepath.Base(url)
+}
+
+// convertToSSHURL converts HTTPS git URL to SSH format
+// Returns the converted URL and true if conversion was done, or original URL and false if not needed
+func convertToSSHURL(url string) (string, bool) {
+	// Already SSH format
+	if strings.HasPrefix(url, "git@") {
+		return url, false
+	}
+
+	// Convert https://github.com/user/repo.git -> git@github.com:user/repo.git
+	// Convert https://github.com/user/repo -> git@github.com:user/repo.git
+	httpsPrefix := "https://"
+	if strings.HasPrefix(url, httpsPrefix) {
+		// Remove https://
+		remainder := strings.TrimPrefix(url, httpsPrefix)
+
+		// Split host and path: github.com/user/repo
+		slashIndex := strings.Index(remainder, "/")
+		if slashIndex == -1 {
+			return url, false
+		}
+
+		host := remainder[:slashIndex]
+		path := remainder[slashIndex+1:]
+
+		// Ensure .git suffix
+		if !strings.HasSuffix(path, ".git") {
+			path = path + ".git"
+		}
+
+		sshURL := fmt.Sprintf("git@%s:%s", host, path)
+		return sshURL, true
+	}
+
+	return url, false
 }
